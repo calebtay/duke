@@ -74,10 +74,6 @@ plugins {
     id 'application'
     id 'checkstyle'
 }
-
-checkstyle {
-    toolVersion = '8.1'
-}
 // ...
 ```
 
