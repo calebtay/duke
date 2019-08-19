@@ -22,8 +22,11 @@ public class Duke {
             if(inputString.equals("bye")) {
                 System.out.println("Bye. Hope to see you again soon!");
                 exit = true;
+            } else if(inputString.equals("list")){
+                TaskList.listTasks();
             } else {
-                System.out.println(inputString);
+                System.out.println( "added: " + inputString);
+                TaskList.addTask(inputString);
             }
         }
     }
