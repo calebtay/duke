@@ -24,10 +24,27 @@ public class Duke {
                 exit = true;
             } else if(inputString.equals("list")){
                 TaskList.listTasks();
+            } else if(inputString.contains("done")){
+                String[] words = inputString.split(" ", 2 );
+                if( words[0].equals("done") && isNumeric(words[1]) ){
+                    TaskList.completedTask(Integer.parseInt(words[1]));
+                } else {
+                    System.out.println( "added: " + inputString);
+                    TaskList.addTask(inputString);
+                }
             } else {
                 System.out.println( "added: " + inputString);
                 TaskList.addTask(inputString);
             }
         }
+    }
+
+    private static boolean isNumeric(String strNum) {
+        try {
+            double d = Double.parseDouble(strNum);
+        } catch (NumberFormatException | NullPointerException nfe) {
+            return false;
+        }
+        return true;
     }
 }
