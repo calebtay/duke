@@ -16,35 +16,51 @@ public class Duke {
         boolean exit = false;
 
         while(!exit){
+            System.out.println("    ____________________________________________________________");
             Scanner S = new Scanner(System.in);
-            String inputString = S. nextLine();
+            String[] inputString = S.nextLine().split(" ", 2 );
+            taskType curr = taskType.valueOf(inputString[0]);
+            System.out.println("    ____________________________________________________________");
 
-            if(inputString.equals("bye")) {
-                System.out.println("Bye. Hope to see you again soon!");
-                exit = true;
-            } else if(inputString.equals("list")){
-                TaskList.listTasks();
-            } else if(inputString.contains("done")){
-                String[] words = inputString.split(" ", 2 );
-                if( words[0].equals("done") && isNumeric(words[1]) ){
-                    TaskList.completedTask(Integer.parseInt(words[1]));
-                } else {
-                    System.out.println( "added: " + inputString);
-                    TaskList.addTask(inputString);
-                }
-            } else {
-                System.out.println( "added: " + inputString);
-                TaskList.addTask(inputString);
-            }
+
+           switch(curr){
+               case todo:
+                   System.out.println("Got it. I've added this task:");
+                   System.out.println("  [T][✗] " + inputString[1]);
+                   TaskList.addTask(inputString[1], curr);
+                   break;
+
+               case list:
+                   TaskList.listTasks();
+                  break;
+
+               case deadline:
+                   System.out.println("Got it. I've added this task:");
+                   System.out.print("  [D][✗] ");
+                   TaskList.addDeadline(inputString[1], curr);
+                   break;
+
+               case event:
+                   System.out.println("Got it. I've added this task:");
+                   System.out.print("  [E][✗] ");
+                   TaskList.addEvent(inputString[1], curr);
+                   break;
+
+               case done:
+                   TaskList.completedTask(Integer.parseInt(inputString[1]));
+                   break;
+
+               case bye:
+                   System.out.println("Bye. Hope to see you again soon!");
+                   exit =true;
+                   break;
+
+               default:
+                   System.out.println("error");
+                   throw new IllegalStateException("Unexpected value: " + curr);
+           }
         }
+
     }
 
-    private static boolean isNumeric(String strNum) {
-        try {
-            double d = Double.parseDouble(strNum);
-        } catch (NumberFormatException | NullPointerException nfe) {
-            return false;
-        }
-        return true;
-    }
 }

@@ -1,43 +1,69 @@
 import java.util.*;
 
-public class TaskList {
-    static ArrayList<Task> Tasks = new ArrayList<Task>();
+class TaskList {
+    private static ArrayList<Object> Tasks = new ArrayList<>();
 
-    public static void addTask(String task){
-        Task input = new Task(task, false);
+    static void addTask(String task, taskType type){
+        Task input = new Task(task);
         Tasks.add(input);
+        System.out.println("Now you have " + Tasks.size() + " tasks in the list.");
     }
 
-    public static void listTasks(){
+    static void addDeadline(String task, taskType type){
+        Deadline input = new Deadline(task.split(" /by ")[0] , task.split(" /by ")[1] );
+        System.out.println(task.split(" /by ")[0] + " (by: " + task.split(" /by ")[1] + ")");
+        Tasks.add(input);
+        System.out.println("Now you have " + Tasks.size() + " tasks in the list.");
+    }
+
+    static void addEvent(String task, taskType type){
+        Event input = new Event(task.split(" /at ")[0] , task.split(" /at ")[1] );
+        System.out.println(task.split(" /at ")[0] + " (at: " + task.split(" /at ")[1] + ")");
+        Tasks.add(input);
+        System.out.println("Now you have " + Tasks.size() + " tasks in the list.");
+    }
+
+    static void listTasks(){
         System.out.println("Here are the tasks in your list:");
         int count = 1;
-        Iterator<Task> ite = Tasks.iterator();
-        while(ite.hasNext()){
+        for (Object obj : Tasks) {
             System.out.print(count + ".");
 
-            Task curTask = ite.next();
-            if(curTask.completed){
-                System.out.print("[✓] ");
+            taskType curType;
+
+            if( obj instanceof Deadline ){
+                System.out.print("[D]");
+                curType = taskType.deadline;
+            } else if( obj instanceof Event ){
+                System.out.print("[E]");
+                curType = taskType.event;
             } else {
-                System.out.print("[✗] ");
+                System.out.print("[T]");
+                curType = taskType.todo;
             }
-            System.out.println(curTask.name);
-            count++;
+
+            Task curTask = (Task) obj;
+            if( curTask.completed ){
+                System.out.print("[✓] ");
+            } else System.out.print("[✗] ");
+            System.out.print(curTask.name);
+
+            if (curType == taskType.deadline) {
+                System.out.println(" (by: " + ((Deadline) obj).checkDeadline() + ")");
+            } else if (curType == taskType.event) {
+                System.out.println(" (at: " + ((Event) obj).checkEvent() + ")");
+            } else {
+                System.out.println("");
+            }
+            ++count;
         }
     }
 
-    public static void completedTask(int index){
+    static void completedTask(int index){
         System.out.println("Nice! I've marked this task as done:");
         System.out.print("  [✓] ");
-        int count = 1;
-        Iterator<Task> ite = Tasks.iterator();
-        while(ite.hasNext()){
-            Task curTask = ite.next();
-            if(count == index){
-                System.out.println(curTask.name);
-                curTask.completed = true;
-            }
-            count++;
-        }
+        Task curTask = (Task) Tasks.get(index-1);
+        System.out.println( curTask.name );
+        curTask.completed();
     }
 }
