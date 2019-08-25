@@ -6,10 +6,14 @@ class TaskList {
     static void addTask(String task, taskType type){
         Task input = new Task(task);
         Tasks.add(input);
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  [T][✗] " + task);
         System.out.println("Now you have " + Tasks.size() + " tasks in the list.");
     }
 
     static void addDeadline(String task, taskType type){
+        System.out.println("Got it. I've added this task:");
+        System.out.print("  [D][✗] ");
         Deadline input = new Deadline(task.split(" /by ")[0] , task.split(" /by ")[1] );
         System.out.println(task.split(" /by ")[0] + " (by: " + task.split(" /by ")[1] + ")");
         Tasks.add(input);
@@ -17,6 +21,8 @@ class TaskList {
     }
 
     static void addEvent(String task, taskType type){
+        System.out.println("Got it. I've added this task:");
+        System.out.print("  [E][✗] ");
         Event input = new Event(task.split(" /at ")[0] , task.split(" /at ")[1] );
         System.out.println(task.split(" /at ")[0] + " (at: " + task.split(" /at ")[1] + ")");
         Tasks.add(input);

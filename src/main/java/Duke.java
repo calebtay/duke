@@ -2,6 +2,8 @@ import java.util.*;
 
 public class Duke {
 
+    private static Boolean exit = false;
+
     public static void main(String[] args) {
         String logo =  " ____        _        \n"
                 + "|  _ \\ _   _| | _____ \n"
@@ -13,54 +15,63 @@ public class Duke {
         System.out.println("Hello! I'm Duke");
         System.out.println("What can I do for you?");
 
-        boolean exit = false;
-
-        while(!exit){
+        while(!exit) {
             System.out.println("    ____________________________________________________________");
-            Scanner S = new Scanner(System.in);
-            String[] inputString = S.nextLine().split(" ", 2 );
-            taskType curr = taskType.valueOf(inputString[0]);
-            System.out.println("    ____________________________________________________________");
-
-
-           switch(curr){
-               case todo:
-                   System.out.println("Got it. I've added this task:");
-                   System.out.println("  [T][✗] " + inputString[1]);
-                   TaskList.addTask(inputString[1], curr);
-                   break;
-
-               case list:
-                   TaskList.listTasks();
-                  break;
-
-               case deadline:
-                   System.out.println("Got it. I've added this task:");
-                   System.out.print("  [D][✗] ");
-                   TaskList.addDeadline(inputString[1], curr);
-                   break;
-
-               case event:
-                   System.out.println("Got it. I've added this task:");
-                   System.out.print("  [E][✗] ");
-                   TaskList.addEvent(inputString[1], curr);
-                   break;
-
-               case done:
-                   TaskList.completedTask(Integer.parseInt(inputString[1]));
-                   break;
-
-               case bye:
-                   System.out.println("Bye. Hope to see you again soon!");
-                   exit =true;
-                   break;
-
-               default:
-                   System.out.println("error");
-                   throw new IllegalStateException("Unexpected value: " + curr);
-           }
+            try{
+                readInput();
+            } catch (IllegalArgumentException a){
+                System.out.println("     ☹ OOPS!!! I'm sorry, but I don't know what that means :-(");
+            }
         }
+    }
 
+    private static void readInput(){
+        Scanner S = new Scanner(System.in);
+        String[] inputString = S.nextLine().split(" ", 2);
+        taskType curr = taskType.valueOf(inputString[0]);
+
+        System.out.println("    ____________________________________________________________");
+
+
+        try {
+            if(inputString[1].startsWith(" ") || inputString[1].isEmpty()){
+                throw new DukeException("empty_description", curr);
+            }
+
+            switch (curr) {
+                case todo:
+                    TaskList.addTask(inputString[1], curr);
+                    break;
+
+                case list:
+                    TaskList.listTasks();
+                    break;
+
+                case deadline:
+                    TaskList.addDeadline(inputString[1], curr);
+                    break;
+
+                case event:
+                    TaskList.addEvent(inputString[1], curr);
+                    break;
+
+                case done:
+                    TaskList.completedTask(Integer.parseInt(inputString[1]));
+                    break;
+
+                case bye:
+                    System.out.println("Bye. Hope to see you again soon!");
+                    exit = true;
+                    break;
+
+                default:
+                    throw new DukeException("Unexpected value: ", curr);
+            }
+        } catch (ArrayIndexOutOfBoundsException e){
+            System.out.println("     ☹ OOPS!!! The description of a " + curr + " cannot be empty.");
+        } catch (DukeException ignored){
+
+        }
     }
 
 }
