@@ -1,10 +1,12 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class Duke {
 
     private static Boolean exit = false;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String logo =  " ____        _        \n"
                 + "|  _ \\ _   _| | _____ \n"
                 + "| | | | | | | |/ / _ \\\n"
@@ -14,7 +16,7 @@ public class Duke {
 
         System.out.println("Hello! I'm Duke");
         System.out.println("What can I do for you?");
-
+        SaveToFile();
         while(!exit) {
             System.out.println("    ____________________________________________________________");
             try{
@@ -34,7 +36,7 @@ public class Duke {
 
 
         try {
-            if(inputString[1].startsWith(" ") || inputString[1].isEmpty()){
+            if( !inputString[0].equals("bye") && (inputString[1].startsWith(" ") || inputString[1].isEmpty())  ){
                 throw new DukeException("empty_description", curr);
             }
 
@@ -72,6 +74,12 @@ public class Duke {
         } catch (DukeException ignored){
 
         }
+    }
+
+    public static void SaveToFile() throws IOException {
+        FileWriter fileWriter = new FileWriter("T:/CS2113T/duke/src/main/data/datafile.txt");
+        fileWriter.write("gg");
+        fileWriter.close();
     }
 
 }
