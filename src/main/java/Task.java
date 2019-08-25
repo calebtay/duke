@@ -1,6 +1,6 @@
 class Task {
     public String name;
-    Boolean completed;
+    public Boolean completed;
     private static int no_Tasks;
 
     Task(String name){

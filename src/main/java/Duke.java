@@ -16,7 +16,9 @@ public class Duke {
 
         System.out.println("Hello! I'm Duke");
         System.out.println("What can I do for you?");
-        SaveToFile();
+
+        TaskList.ReadFile();
+
         while(!exit) {
             System.out.println("    ____________________________________________________________");
             try{
@@ -36,7 +38,7 @@ public class Duke {
 
 
         try {
-            if( !inputString[0].equals("bye") && (inputString[1].startsWith(" ") || inputString[1].isEmpty())  ){
+            if( !inputString[0].equals("bye") && !inputString[0].equals("list") && (inputString[1].startsWith(" ") || inputString[1].isEmpty())  ){
                 throw new DukeException("empty_description", curr);
             }
 
@@ -73,12 +75,13 @@ public class Duke {
             System.out.println("     ☹ OOPS!!! The description of a " + curr + " cannot be empty.");
         } catch (DukeException ignored){
 
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    public static void SaveToFile() throws IOException {
+    private static void ReadFromFile() throws IOException {
         FileWriter fileWriter = new FileWriter("T:/CS2113T/duke/src/main/data/datafile.txt");
-        fileWriter.write("gg");
         fileWriter.close();
     }
 
