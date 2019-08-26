@@ -59,7 +59,11 @@ class TaskList {
             System.out.print(curTask.name);
 
             if (curType == taskType.deadline) {
-                System.out.println(" (by: " + ((Deadline) obj).checkDeadline() + ")");
+                if(((Deadline) obj).checkDeadline().equals("DATE")){
+                    System.out.println(" (by: " + ((Deadline) obj).returnDate() + ")");
+                } else {
+                    System.out.println(" (by: " + ((Deadline) obj).checkDeadline() + ")");
+                }
             } else if (curType == taskType.event) {
                 System.out.println(" (at: " + ((Event) obj).checkEvent() + ")");
             } else {
