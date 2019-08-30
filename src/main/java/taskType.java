@@ -1,3 +1,3 @@
 public enum taskType {
-    todo, list, deadline, event, done, bye
+    todo, list, deadline, event, done, delete, find, bye
 }

@@ -68,6 +68,14 @@ public class Duke {
                     exit = true;
                     break;
 
+                case delete:
+                    TaskList.deleteTask(Integer.parseInt(inputString[1]));
+                    break;
+
+                case find:
+                    TaskList.find(inputString[1]);
+                    break;
+
                 default:
                     throw new DukeException("Unexpected value: ", curr);
             }

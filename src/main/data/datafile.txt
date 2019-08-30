@@ -1,4 +1,3 @@
-D | 0 | get a life | soon
-E | 1 | get recked | gg O'clock
-T | 0 | help myself
-D | 0 | ggwp | 2/12/2019 1800
+D | 1 | get a life | soon
+E | 1 | kill myself | now
+D | 0 | return book | 2/12/2019 1800

@@ -1,4 +1,5 @@
 import java.io.*;
+import java.time.temporal.TemporalAccessor;
 import java.util.*;
 
 class TaskList {
@@ -33,42 +34,49 @@ class TaskList {
         SaveFile();
     }
 
+    private static void printINFO(Object obj){
+        taskType curType;
+
+        if( obj instanceof Deadline ){
+            System.out.print("  [D]");
+            curType = taskType.deadline;
+        } else if( obj instanceof Event ){
+            System.out.print("  [E]");
+            curType = taskType.event;
+        } else {
+            System.out.print("  [T]");
+            curType = taskType.todo;
+        }
+
+        Task curTask = (Task) obj;
+        if( curTask.completed ){
+            System.out.print("[✓] ");
+        } else System.out.print("[✗] ");
+        System.out.print(curTask.name);
+
+        if (curType == taskType.deadline) {
+            if(((Deadline) obj).isDate){
+                System.out.println(" (by: " + ((Deadline) obj).returnDate() + ")");
+            } else {
+                System.out.println(" (by: " + ((Deadline) obj).checkDeadline() + ")");
+            }
+        } else if (curType == taskType.event) {
+            if(((Event) obj).isDate){
+                System.out.println(" (at: " + ((Event) obj).returnDate() + ")");
+            } else {
+                System.out.println(" (at: " + ((Event) obj).checkEvent() + ")");
+            }
+        } else {
+            System.out.println("");
+        }
+    }
+
     static void listTasks(){
         System.out.println("Here are the tasks in your list:");
         int count = 1;
         for (Object obj : Tasks) {
             System.out.print(count + ".");
-
-            taskType curType;
-
-            if( obj instanceof Deadline ){
-                System.out.print("[D]");
-                curType = taskType.deadline;
-            } else if( obj instanceof Event ){
-                System.out.print("[E]");
-                curType = taskType.event;
-            } else {
-                System.out.print("[T]");
-                curType = taskType.todo;
-            }
-
-            Task curTask = (Task) obj;
-            if( curTask.completed ){
-                System.out.print("[✓] ");
-            } else System.out.print("[✗] ");
-            System.out.print(curTask.name);
-
-            if (curType == taskType.deadline) {
-                if(((Deadline) obj).checkDeadline().equals("DATE")){
-                    System.out.println(" (by: " + ((Deadline) obj).returnDate() + ")");
-                } else {
-                    System.out.println(" (by: " + ((Deadline) obj).checkDeadline() + ")");
-                }
-            } else if (curType == taskType.event) {
-                System.out.println(" (at: " + ((Event) obj).checkEvent() + ")");
-            } else {
-                System.out.println("");
-            }
+            printINFO(obj);
             ++count;
         }
     }
@@ -80,6 +88,30 @@ class TaskList {
         System.out.println( curTask.name );
         curTask.completed();
         SaveFile();
+    }
+
+    static void deleteTask(int index) throws IOException {
+        System.out.println("Noted. I've removed this task:");
+        Object obj = (Object) Tasks.get(index-1);
+        printINFO(obj);
+
+        Tasks.remove(obj);
+
+        SaveFile();
+        System.out.println("Now you have " + Tasks.size() + " tasks in the list.");
+    }
+
+    static void find(String word){
+        System.out.println("Here are the matching tasks in your list:");
+        int count = 1;
+        for (Object obj : Tasks) {
+            Task currTask = (Task) obj;
+            if( currTask.name.contains(word) ){
+                System.out.print(count + ".");
+                printINFO(obj);
+                ++count;
+            }
+        }
     }
 
     private static void SaveFile() throws IOException {
