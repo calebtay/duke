@@ -1,37 +1,80 @@
 import java.io.*;
-import java.time.temporal.TemporalAccessor;
 import java.util.*;
 
 class TaskList {
-    private static ArrayList<Object> Tasks = new ArrayList<>();
+    public static ArrayList<Object> Tasks = new ArrayList<>();
 
-    static void addTask(String task, taskType type) throws IOException {
-        Task input = new Task(task);
-        Tasks.add(input);
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  [T][✗] " + task);
-        System.out.println("Now you have " + Tasks.size() + " tasks in the list.");
-        SaveFile();
+    TaskList(Storage storage) throws DukeException, IOException {
+        Storage.ReadFile();
     }
 
-    static void addDeadline(String task, taskType type) throws IOException {
-        System.out.println("Got it. I've added this task:");
-        System.out.print("  [D][✗] ");
-        Deadline input = new Deadline(task.split(" /by ")[0] , task.split(" /by ")[1] );
-        System.out.println(task.split(" /by ")[0] + " (by: " + task.split(" /by ")[1] + ")");
-        Tasks.add(input);
-        System.out.println("Now you have " + Tasks.size() + " tasks in the list.");
-        SaveFile();
+    TaskList(){
     }
 
-    static void addEvent(String task, taskType type) throws IOException {
-        System.out.println("Got it. I've added this task:");
-        System.out.print("  [E][✗] ");
-        Event input = new Event(task.split(" /at ")[0] , task.split(" /at ")[1] );
-        System.out.println(task.split(" /at ")[0] + " (at: " + task.split(" /at ")[1] + ")");
-        Tasks.add(input);
-        System.out.println("Now you have " + Tasks.size() + " tasks in the list.");
-        SaveFile();
+    public static ArrayList<Object> getTasks(){
+        return Tasks;
+    }
+
+    public static void addTask(String task) throws IOException, DukeException {
+
+        if( isBlank(task) ){
+            throw new DukeException("empty_description", taskType.todo);
+        } else {
+            UI.AddTask();
+            System.out.println("  [T][✗] " + task);
+            Task input = new Task(task);
+            Tasks.add(input);
+            System.out.println("Now you have " + Tasks.size() + " tasks in the list.");
+            Storage.SaveFile();
+        }
+
+    }
+
+    public static void addDeadline(String task) throws IOException, DukeException {
+
+        if( isBlank(task) ){
+            throw new DukeException("empty_description");
+        } else {
+            UI.AddTask();
+            System.out.print("  [D][✗] ");
+            Deadline input = new Deadline(task.split(" /by ")[0] , task.split(" /by ")[1] );
+            if( input.isDate ){
+                System.out.println(task.split(" /by ")[0] + " (by: " + input.returnDate() + ")");
+            } else {
+                System.out.println(task.split(" /by ")[0] + " (by: " + task.split(" /by ")[1] + ")");
+            }
+            Tasks.add(input);
+            Storage.SaveFile();
+        }
+
+    }
+
+    public static void addEvent(String task) throws IOException, DukeException {
+
+        if( isBlank(task) ){
+            throw new DukeException("empty_description");
+        } else {
+            UI.AddTask();
+            System.out.print("  [E][✗] ");
+            Event input = new Event(task.split(" /at ")[0] , task.split(" /at ")[1] );
+            if( input.isDate ){
+                System.out.println(task.split(" /at ")[0] + " (at: " + input.returnDate() + ")");
+            } else {
+                System.out.println(task.split(" /at ")[0] + " (at: " + task.split(" /at ")[1] + ")");
+            }
+            Tasks.add(input);
+            System.out.println("Now you have " + Tasks.size() + " tasks in the list.");
+            Storage.SaveFile();
+        }
+
+    }
+
+    public static void addDeadline(Deadline d){ Tasks.add(d); }
+
+    public static void addEvent(Event e){ Tasks.add(e); }
+
+    public static void addTask(Task t){
+        Tasks.add(t);
     }
 
     private static void printINFO(Object obj){
@@ -87,17 +130,17 @@ class TaskList {
         Task curTask = (Task) Tasks.get(index-1);
         System.out.println( curTask.name );
         curTask.completed();
-        SaveFile();
+        Storage.SaveFile();
     }
 
     static void deleteTask(int index) throws IOException {
         System.out.println("Noted. I've removed this task:");
-        Object obj = (Object) Tasks.get(index-1);
+        Object obj = Tasks.get(index-1);
         printINFO(obj);
 
         Tasks.remove(obj);
 
-        SaveFile();
+        Storage.SaveFile();
         System.out.println("Now you have " + Tasks.size() + " tasks in the list.");
     }
 
@@ -114,66 +157,16 @@ class TaskList {
         }
     }
 
-    private static void SaveFile() throws IOException {
-        FileWriter fileWriter = new FileWriter("T:/CS2113T/duke/src/main/data/datafile.txt");
-        PrintWriter printWriter = new PrintWriter(fileWriter);
+    private static Boolean isBlank(String s){
+        if (s == null) return true;
 
-        for (Object obj : Tasks) {
-
-            taskType curType;
-            String input = null;
-            if( obj instanceof Deadline ){
-                input = "D";
-                curType = taskType.deadline;
-            } else if( obj instanceof Event ){
-                input = "E";
-                curType = taskType.event;
-            } else {
-                input = "T";
-                curType = taskType.todo;
-            }
-            input = input + " | ";
-            Task curTask = (Task) obj;
-            if( curTask.completed ){
-                input = input + "1";
-            } else input = input + "0";
-
-            input = input + " | ";
-            input = input + curTask.name;
-
-            if (curType == taskType.deadline) {
-                input = input + " | " + ((Deadline) obj).checkDeadline();
-            } else if (curType == taskType.event) {
-                input = input + " | " + ((Event) obj).checkEvent();
-            }
-
-            printWriter.println(input);
-        }
-        printWriter.close();
-    }
-
-    public static void ReadFile() throws IOException{
-        File file = new File("T:/CS2113T/duke/src/main/data/datafile.txt");
-        Scanner sc = new Scanner(file);
-        //System.out.println(sc.nextLine());
-
-        while(sc.hasNextLine()){
-            String[] output = sc.nextLine().split(" \\| ");
-            if( output[0].equals("D") ){
-                Deadline curr = new Deadline(output[2], output[3]);
-                if( output[1].equals("1") ) curr.completed = true;
-                Tasks.add(curr);
-            } else if( output[0].equals("E") ){
-                Event curr = new Event(output[2], output[3]);
-                if( output[1].equals("1") ) curr.completed = true;
-                Tasks.add(curr);
-            } else {
-                Task curr = new Task(output[2]);
-                if( output[1].equals("1") ) curr.completed = true;
-                Tasks.add(curr);
+        for (int i = 0; i < s.length(); i++) {
+            if (!Character.isWhitespace(s.charAt(i))) {
+                return false;
             }
         }
 
+        return true;
     }
 
 }

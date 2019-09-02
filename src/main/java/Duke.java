@@ -1,96 +1,50 @@
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
 
 public class Duke {
 
+    private UI ui;
+    private Storage storage;
+    private TaskList tasks;
     private static Boolean exit = false;
 
-    public static void main(String[] args) throws IOException {
-        String logo =  " ____        _        \n"
-                + "|  _ \\ _   _| | _____ \n"
-                + "| | | | | | | |/ / _ \\\n"
-                + "| |_| | |_| |   <  __/\n"
-                + "|____/ \\__,_|_|\\_\\___|\n";
-        System.out.println("Hello from\n" + logo);
+    private Duke(String filepath) throws IOException, DukeException {
+        try {
+            ui = new UI();
+            storage = new Storage(filepath);
+            tasks = new TaskList(storage.load());
+        } catch (IOException e){
+            tasks = new TaskList();
+        }
+    }
 
-        System.out.println("Hello! I'm Duke");
-        System.out.println("What can I do for you?");
+    private void run() throws DukeException, IllegalArgumentException {
 
-        TaskList.ReadFile();
+        ui.showWelcome();
 
         while(!exit) {
-            System.out.println("    ____________________________________________________________");
             try{
-                readInput();
+                String fullCommand = ui.readCommand();
+                ui.showLine();
+                Command c = Parser.parse(fullCommand);
+                c.executes(tasks, storage, ui);
+                exit = c.isExit();
+
             } catch (IllegalArgumentException a){
-                System.out.println("     ☹ OOPS!!! I'm sorry, but I don't know what that means :-(");
+                throw new DukeException("unknown_command");
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (DukeException g) {
+                g.printStackTrace();
+            } finally {
+                ui.showLine();
             }
         }
     }
 
-    private static void readInput(){
-        Scanner S = new Scanner(System.in);
-        String[] inputString = S.nextLine().split(" ", 2);
-        taskType curr = taskType.valueOf(inputString[0]);
+    public static void main(String[] args) throws IOException, DukeException {
 
-        System.out.println("    ____________________________________________________________");
+        new Duke("T:/CS2113T/duke/src/main/data/datafile.txt").run();
 
-
-        try {
-            if( !inputString[0].equals("bye") && !inputString[0].equals("list") && (inputString[1].startsWith(" ") || inputString[1].isEmpty())  ){
-                throw new DukeException("empty_description", curr);
-            }
-
-            switch (curr) {
-                case todo:
-                    TaskList.addTask(inputString[1], curr);
-                    break;
-
-                case list:
-                    TaskList.listTasks();
-                    break;
-
-                case deadline:
-                    TaskList.addDeadline(inputString[1], curr);
-                    break;
-
-                case event:
-                    TaskList.addEvent(inputString[1], curr);
-                    break;
-
-                case done:
-                    TaskList.completedTask(Integer.parseInt(inputString[1]));
-                    break;
-
-                case bye:
-                    System.out.println("Bye. Hope to see you again soon!");
-                    exit = true;
-                    break;
-
-                case delete:
-                    TaskList.deleteTask(Integer.parseInt(inputString[1]));
-                    break;
-
-                case find:
-                    TaskList.find(inputString[1]);
-                    break;
-
-                default:
-                    throw new DukeException("Unexpected value: ", curr);
-            }
-        } catch (ArrayIndexOutOfBoundsException e){
-            System.out.println("     ☹ OOPS!!! The description of a " + curr + " cannot be empty.");
-        } catch (DukeException ignored){
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void ReadFromFile() throws IOException {
-        FileWriter fileWriter = new FileWriter("T:/CS2113T/duke/src/main/data/datafile.txt");
-        fileWriter.close();
     }
 
 }

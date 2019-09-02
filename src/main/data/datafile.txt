@@ -1,3 +1,12 @@
-D | 1 | get a life | soon
-E | 1 | kill myself | now
+D | 0 | return book | June 6th
+E | 0 | project meeting | Aug 6th 2-4pm
+T | 1 | join sports club
+T | 0 | urmom
 D | 0 | return book | 2/12/2019 1800
+D | 0 | return book | 2/12/2019 1800
+T | 0 | urmom
+D | 0 | return book | 2/12/2019 1800
+E | 1 | urmomg= gay | everyday
+E | 0 | get reckef | 10/12/2019
+E | 0 | get reckef | 10/12/2019 2100
+E | 0 | ggwp | 11/06/2019 1111
