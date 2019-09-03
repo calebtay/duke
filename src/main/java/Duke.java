@@ -7,7 +7,7 @@ public class Duke {
     private TaskList tasks;
     private static Boolean exit = false;
 
-    private Duke(String filepath) throws IOException, DukeException {
+    private Duke(String filepath) throws DukeException {
         try {
             ui = new UI();
             storage = new Storage(filepath);
@@ -17,7 +17,7 @@ public class Duke {
         }
     }
 
-    private void run() throws DukeException, IllegalArgumentException {
+    private void run() throws DukeException, IllegalArgumentException, IOException {
 
         ui.showWelcome();
 
@@ -32,19 +32,17 @@ public class Duke {
             } catch (IllegalArgumentException a){
                 throw new DukeException("unknown_command");
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (DukeException g) {
-                g.printStackTrace();
+                throw new DukeException("unknown_command");
+            } catch (DukeException d){
+                throw new DukeException("unknown_command");
             } finally {
                 ui.showLine();
             }
         }
     }
 
-    public static void main(String[] args) throws IOException, DukeException {
-
+    public static void main(String[] args) throws IOException, IllegalArgumentException, DukeException {
         new Duke("T:/CS2113T/duke/src/main/data/datafile.txt").run();
-
     }
 
 }

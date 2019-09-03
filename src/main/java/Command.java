@@ -4,12 +4,12 @@ public class Command {
     private taskType type;
     private String info;
 
-    public Command(taskType type, String info){
+    public Command(taskType type, String info) {
         this.type = type;
         this.info = info;
     }
 
-    public Command(taskType type){
+    public Command(taskType type) {
         this.type = type;
         this.info = null;
     }
@@ -45,7 +45,7 @@ public class Command {
         }
     }
 
-    public Boolean isExit(){
+    public Boolean isExit() {
         return type == taskType.bye;
     }
 }
