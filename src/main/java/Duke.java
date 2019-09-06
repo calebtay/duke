@@ -2,7 +2,7 @@ import java.io.IOException;
 
 public class Duke {
 
-    private UI ui;
+    private static UI ui;
     private Storage storage;
     private TaskList tasks;
     private static Boolean exit = false;
@@ -15,6 +15,11 @@ public class Duke {
         } catch (IOException e){
             tasks = new TaskList();
         }
+    }
+
+    public static String getResponse(String text) {
+        String fullCommand = ui.readCommand();
+        return fullCommand;
     }
 
     private void run() throws DukeException, IllegalArgumentException, IOException {
